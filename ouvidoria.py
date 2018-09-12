@@ -2,6 +2,7 @@ import argparse
 import pyexcel
 import json
 import html
+from slugify import slugify
 from bs4 import BeautifulSoup
 
 INDEX_FIELD = 'Número de Protocolo'
@@ -13,30 +14,94 @@ CABECALHO_PLANILHA = [
     'Texto da Resposta'
 ]
 
-def excel_to_json(input_file, output_file):
+tipos_arquivos = {
+    'simples': {
+        'index_field': 'Número de Protocolo',
+        'cabecalho': [
+            'Número de Protocolo',
+            'Data do Pedido',
+            'Texto do Pedido',
+            'DataRegistro',
+            'Texto da Resposta'
+        ]
+    },
+    'completo': {
+        'index_field': 'PROTOCOLO',
+        'cabecalho': [
+            'OUVIDORIA DE ORIGEM',
+            'MUNICIPIO ORIGEM',
+            'UF ORIGEM',
+            'ESFERA ORIGEM',
+            'PROTOCOLO',
+            'MEIO DE ATENDIMENTO',
+            'ORIGEM DO ATENDIMENTO',
+            'DEMANDA ATIVA (S/N)',
+            'DATA DA DEMANDA',
+            'DATA PREVISTA PARA CONCLUSAO',
+            'DATA DO FECHAMENTO',
+            'CLASSIFICACAO',
+            'ASSUNTO',
+            'SUBASSUNTO 1',
+            'SUBASSUNTO 2',
+            'SUBASSUNTO 3',
+            'FARMACO',
+            'DAPS',
+            'ESTABELECIMENTO COMERCIAL',
+            'PRIMEIRO DESTINO',
+            'MUNICIPIO PRIMEIRO DESTINO',
+            'UF PRIMEIRO DESTINO',
+            'DESTINO ATUAL',
+            'MUNICIPIO DESTINO ATUAL',
+            'UF DESTINO ATUAL',
+            'STATUS ACOMPANHAMENTO',
+            'DATA DO ACOMPANHAMENTO',
+            'MUNICIPIO CIDADAO',
+            'BAIRRO CIDADAO',
+            'CEP CIDADAO',
+            'UF CIDADAO',
+            'SIGILOSO (S/N)',
+            'ANONIMO (S/N)',
+            'DETALHE DA DEMANDA',
+            'OUVIDORIA RESPOSTA',
+            'TIPO OUVIDORIA RESPOSTA',
+            'MUNICIPIO OUVIDORIA RESPOSTA',
+            'UF OUVIDORIA  RESPOSTA',
+            'ESFERA OUVIDORIA RESPOSTA',
+            'USUARIO RESPOSTA',
+            'RESPOSTA'
+        ]
+    }
+}
+
+def excel_to_json(input_file, output_file, tipo_arquivo):
     records = pyexcel.get_records(file_name=input_file)
     d = dict()
     index_d = dict()
     separators = (',', ':')
+    index_field = tipos_arquivos[tipo_arquivo]['index_field']
     with open(output_file, 'w') as outfile:
         for record in records:
-            index_d['index'] = {'_id': record[INDEX_FIELD]}
-            d['data_pedido'] = record['Data do Pedido']
-            d['texto_pedido'] = record['Texto do Pedido']
-            d['data_registro'] = record['DataRegistro']
-            d['texto_resposta'] = BeautifulSoup(html.unescape(record['Texto da Resposta']), 'html.parser').get_text()
+            index_d['index'] = {'_id': record[index_field]}
             json.dump(index_d, outfile, separators=separators)
             outfile.write('\n')
+            for cabecalho in tipos_arquivos[tipo_arquivo]['cabecalho']:
+                d[slugify(cabecalho)] = str(record[cabecalho])
+                # d['texto_resposta'] = BeautifulSoup(
+                #    html.unescape(record['Texto da Resposta']), 'html.parser'
+                # ).get_text()
+
             json.dump(d, outfile, separators=separators)
             outfile.write('\n')
     pyexcel.free_resources()
-    
 
-def check_header(header):
+
+def check_header(header, tipo_arquivo):
     """Checa se a primeira linha da planilha corresponde ao CABECALHO_PLANILHA"""
-    for cabecalho in CABECALHO_PLANILHA:
+    for cabecalho in tipos_arquivos[tipo_arquivo]['cabecalho']:
         if not (cabecalho in header):
-            Raise(Exception('A planilha não contém a coluna %s.' % cabecalho))
+            print('A coluna %s não foi encontrada no arquivo' % cabecalho)
+            return False
+    return True
 
 def check_file(file_path):
     """Checa se:
@@ -59,10 +124,12 @@ def check_file(file_path):
         ))
         pyexcel.free_resources()
     header = sheet_array.__next__()
-    check_header(header)
-    print('File ok!')
+    for tipo_arquivo in tipos_arquivos:
+        if check_header(header, tipo_arquivo):
+            print('File ok!')
+            return tipo_arquivo
     pyexcel.free_resources()
-
+    raise Exception('Não foi possível reconhecer o formato da planilha')
 
 if __name__ == '__main__':
     """Para que o script funcione é necessário informar o caminho do arquivo
@@ -74,8 +141,8 @@ if __name__ == '__main__':
     )
     parser.add_argument('file_path', type=str, help='Local do arquivo da ouvidoria')
     args = parser.parse_args()
-    check_file(args.file_path)
-    excel_to_json(args.file_path, 'output.json')
+    tipo_arquivo = check_file(args.file_path)
+    excel_to_json(args.file_path, 'output.json', tipo_arquivo)
     print('"output.json" gerado.')
 
 
