@@ -5,15 +5,6 @@ import html
 from slugify import slugify
 from bs4 import BeautifulSoup
 
-INDEX_FIELD = 'Número de Protocolo'
-CABECALHO_PLANILHA = [
-    INDEX_FIELD,
-    'Data do Pedido',
-    'Texto do Pedido',
-    'DataRegistro',
-    'Texto da Resposta'
-]
-
 tipos_arquivos = {
     'simples': {
         'index_field': 'Número de Protocolo',

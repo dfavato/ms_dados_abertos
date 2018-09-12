@@ -44,9 +44,55 @@ python ouvidoria.py caminho/para/planilha/da/ouvidoria
 ```
 
 Para que o script funcione, a planilha da ouvidoria deve ter as seguintes colunas:
+**Planilha simples**
 
 |Número de protocolo|Data do pedido|Texto do pedido|DataRegistro|Texto da Resposta|
 |-------------------|--------------|---------------|------------|-----------------|
+
+**Planilha completa**
+|Cabeçalho|
+|---------|
+|OUVIDORIA DE ORIGEM|
+|MUNICIPIO ORIGEM|
+|UF ORIGEM|
+|ESFERA ORIGEM|
+|PROTOCOLO|
+|MEIO DE ATENDIMENTO|
+|ORIGEM DO ATENDIMENTO|
+|DEMANDA ATIVA (S/N)|
+|DATA DA DEMANDA|
+|DATA PREVISTA PARA CONCLUSAO|
+|DATA DO FECHAMENTO|
+|CLASSIFICACAO|
+|ASSUNTO|
+|SUBASSUNTO 1|
+|SUBASSUNTO 2|
+|SUBASSUNTO 3|
+|FARMACO|
+|DAPS|
+|ESTABELECIMENTO COMERCIAL|
+|PRIMEIRO DESTINO|
+|MUNICIPIO PRIMEIRO DESTINO|
+|UF PRIMEIRO DESTINO|
+|DESTINO ATUAL|
+|MUNICIPIO DESTINO ATUAL|
+|UF DESTINO ATUAL|
+|STATUS ACOMPANHAMENTO|
+|DATA DO ACOMPANHAMENTO|
+|MUNICIPIO CIDADAO|
+|BAIRRO CIDADAO|
+|CEP CIDADAO|
+|UF CIDADAO|
+|SIGILOSO (S/N)|
+|ANONIMO (S/N)|
+|DETALHE DA DEMANDA|
+|OUVIDORIA RESPOSTA|
+|TIPO OUVIDORIA RESPOSTA|
+|MUNICIPIO OUVIDORIA RESPOSTA|
+|UF OUVIDORIA  RESPOSTA|
+|ESFERA OUVIDORIA RESPOSTA|
+|USUARIO RESPOSTA|
+|RESPOSTA|
 
 Ao rodar o script será gerado o arquivo `output.json`
 
