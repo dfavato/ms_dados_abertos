@@ -44,12 +44,14 @@ python ouvidoria.py caminho/para/planilha/da/ouvidoria
 ```
 
 Para que o script funcione, a planilha da ouvidoria deve ter as seguintes colunas:
+
 **Planilha simples**
 
 |Número de protocolo|Data do pedido|Texto do pedido|DataRegistro|Texto da Resposta|
 |-------------------|--------------|---------------|------------|-----------------|
 
 **Planilha completa**
+
 |Cabeçalho|
 |---------|
 |OUVIDORIA DE ORIGEM|
